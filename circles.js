@@ -78,11 +78,13 @@
     this._value          = 0;
     this._maxValue       = options.maxValue || 100;
 
-    this._text           = options.text === undefined ? function(value){return this.htmlifyNumber(value);} : options.text;
+    this._text           = options.text === undefined ? '' : options.text;
     this._strokeWidth    = options.width  || 10;
     this._colors         = options.colors || ['#EEE', '#F00'];
     this._svg            = null;
     this._movingPath     = null;
+    this._percentageText = null;
+
     this._wrapContainer  = null;
     this._textContainer  = null;
 
@@ -95,8 +97,8 @@
     this._styleWrapper   = options.styleWrapper === false ? false : true;
     this._styleText      = options.styleText === false ? false : true;
 
-    var endAngleRad      = Math.PI / 180 * 270;
-    this._start          = -Math.PI / 180 * 90;
+    var endAngleRad      = Math.PI / 180 * 450;
+    this._start          = Math.PI/180*90;
     this._startPrecise   = this._precise(this._start);
     this._circ           = endAngleRad - this._start;
 
@@ -104,11 +106,13 @@
   };
 
   Circles.prototype = {
+
     VERSION: '0.0.6',
 
     _generate: function() {
 
       this._svgSize        = this._radius * 2;
+      
       this._radiusAdjusted = this._radius - (this._strokeWidth / 2);
 
       this._generateSvg()._generateText()._generateWrapper();
@@ -120,9 +124,12 @@
     },
 
     _setPercentage: function(percentage) {
+
       this._movingPath.setAttribute('d', this._calculatePath(percentage, true));
       this._textContainer.innerHTML	=	this._getText(this.getValueFromPercent(percentage));
-    },
+      this._percentageText.innerHTML = percentage + "% &nbsp;&nbsp;&nbsp;" + (100 -percentage) + "%"  ;
+
+   },
 
     _generateWrapper: function() {
       this._wrapContainer	=	document.createElement('div');
@@ -166,6 +173,7 @@
     },
 
     _getText: function(value) {
+
       if (!this._text) return '';
 
       if (value === undefined) value = this._value;
@@ -182,27 +190,56 @@
       this._svg.setAttribute('width', this._svgSize);
       this._svg.setAttribute('height', this._svgSize);
 
-      this._generatePath(100, false, this._colors[0], this._maxValClass)._generatePath(1, true, this._colors[1], this._valClass);
-
+      this._generatePath(100, false, this._colors[0], this._maxValClass);
+      this._generatePath(1, true, this._colors[1], this._valClass);
+      
       this._movingPath = this._svg.getElementsByTagName('path')[1];
 
+      this._generatePercentageText("");
+      this._percentageText = this._svg.getElementsByTagName('textPath')[0];
+      
       return this;
     },
 
+    _generatePercentageText: function(percentage){
+
+      var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('text-anchor', 'middle');
+      
+      var textPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
+      textPath.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', '#pathForeground');
+      textPath.setAttribute('startOffset', '105%');
+      textPath.setAttribute('text-anchor', 'end');
+      textPath.setAttribute('class', 'percentage');
+      textPath.setAttribute('fill', '#ffffff');
+      textPath.setAttribute('font-family', 'Open Sans');
+      textPath.setAttribute('font-size', '17');
+      textPath.innerHTML = percentage;
+
+      text.appendChild(textPath);
+      this._svg.appendChild(text);
+    },
+
     _generatePath: function(percentage, open, color, pathClass) {
+
+      var id = (!open) ? 'pathBackground' : 'pathForeground';
+
       var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('fill', 'transparent');
       path.setAttribute('stroke', color);
       path.setAttribute('stroke-width', this._strokeWidth);
       path.setAttribute('d',  this._calculatePath(percentage, open));
       path.setAttribute('class', pathClass);
+      path.setAttribute('id', id);
 
       this._svg.appendChild(path);
+
 
       return this;
     },
 
     _calculatePath: function(percentage, open) {
+
       var end      = this._start + ((percentage / 100) * this._circ),
         endPrecise = this._precise(end);
       return this._arc(endPrecise, open);
@@ -254,6 +291,12 @@
       return this._generate().update(true);
     },
 
+    updateText: function(text) {
+      this._text = text;
+
+      return this._generate().update(true);
+    },
+
     updateWidth: function(width) {
       this._strokeWidth = width;
 
@@ -290,6 +333,7 @@
     },
 
     update: function(value, duration) {
+
       if (value === true) {//Force update with current value
         this._setPercentage(this.getPercent());
         return this;

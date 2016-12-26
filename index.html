@@ -1,0 +1,143 @@
+<html>
+<body >
+
+  <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"
+  integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="circles.js"></script>
+ 
+	<style>
+
+    .avatar{
+      width: 215px;
+      height: 250px;
+    }
+
+    .percentage{
+      -moz-text-shadow:    -2px 2px 0 #555;
+      -webkit-text-shadow: -2px 2px 0 #555;
+      text-shadow:         -2px 2px 0 #555;
+      baseline-shift: sub;
+    }
+    
+		#canvas {
+			display: inline-block;
+			margin: 1em;
+      position: relative;
+    }
+
+    .circles-text{
+      font-size: 28px;
+      color: #fd9314;
+      position:   absolute;
+      top:        0;
+      left:       0;
+      text-align:  center;
+      margin-top: 82px;
+      width:      100%;
+      height:     100%;
+      line-height: 100%;
+    }
+    
+    .circles-text .small-label{
+      font-size: 12px;
+      color: #ddd;
+    }
+
+    .circles-wrp, .overlay {
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+		.circles-decimals {
+			font-size: .4em;
+		}
+
+    .overlay {
+      z-index: 10;
+      height:  80px;
+      margin-top: 200px;
+      background-color: white;
+    }
+	</style>
+
+  <div class="container">
+
+      <div class="header clearfix">
+        <h3 class="text-muted">Project name</h3>
+      </div>
+
+      <div class="col-lg-6">
+          <h4>Subheading</h4>
+            
+            <div id="canvas">
+               <div class="circle" id="circles-1"></div>
+               <div class="overlay"> 
+               </div>
+            </div>
+
+
+      </div>
+
+      <footer class="footer">
+        <p>&copy; 2016 Company, Inc.</p>
+      </footer>
+
+    </div> <!-- /container -->
+
+ 
+	<script>
+
+  var circle;
+  
+  displayTime();
+
+  function displayTime() {
+
+      var time = moment().format('HH:mm:ss');
+
+      if(circle){
+        var text = "<span class='small-label'>"+
+                   "FALTAM</span><br/>"+
+                   "<span>" + time + "</span><br/>" +
+                   "<span class='small-label'>PARA ENCERRAR A VOTAÇÃO</span>";
+        circle.updateText(text);
+      }
+
+      setTimeout(displayTime, 100000);
+   }
+
+     
+		var colors =  [ '#dfdedb', '#fd9314'];
+    
+ 		var child = document.getElementById('circles-1');
+			
+      
+    circle = Circles.create({
+          id:         child.id,
+          value:		  65,
+          radius:     130,
+          width:      38,
+          colors:     colors,
+          styleText: false
+			});
+
+	</script>
+
+</body>
+</html>
+
+ 
