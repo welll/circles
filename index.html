@@ -85,7 +85,7 @@
             
             <div id="canvas">
                <div class="circle" id="circles-1"></div>
-               <div class="overlay"> 
+               <div class="overlay" style="display:block;"> 
                </div>
             </div>
 
@@ -104,9 +104,9 @@
   var circle;
   
   displayTime();
-
+  var i = 65;
   function displayTime() {
-
+      //i++;
       var time = moment().format('HH:mm:ss');
 
       if(circle){
@@ -115,6 +115,7 @@
                    "<span>" + time + "</span><br/>" +
                    "<span class='small-label'>PARA ENCERRAR A VOTAÇÃO</span>";
         circle.updateText(text);
+        circle.update(i)
       }
 
       setTimeout(displayTime, 100000);
