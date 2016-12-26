@@ -83,6 +83,8 @@
     this._colors         = options.colors || ['#EEE', '#F00'];
     this._svg            = null;
     this._movingPath     = null;
+    this._movingPathShd  = null;
+    
     this._percentageTextInner = null;
     this._percentageTextOuter = null;
 
@@ -127,9 +129,12 @@
     _setPercentage: function(percentage) {
 
       this._movingPath.setAttribute('d', this._calculatePath(percentage, true));
-      this._textContainer.innerHTML	=	this._getText(this.getValueFromPercent(percentage));
+      this._movingPathShd.setAttribute('d', this._calculatePath(percentage+10, true));
+        debugger;
       this._percentageTextInner.innerHTML = percentage + "%";
-      this._percentageTextInner.innerHTML = (100 -percentage) + "%";
+      this._percentageTextOuter.innerHTML = (100 -percentage) + "%";
+
+      this._textContainer.innerHTML	=	this._getText(this.getValueFromPercent(percentage));
 
    },
 
@@ -192,29 +197,31 @@
       this._svg.setAttribute('width', this._svgSize);
       this._svg.setAttribute('height', this._svgSize);
 
-      this._generatePath(100, false, this._colors[0], this._maxValClass);
-      this._generatePath(1, true, this._colors[1], this._valClass);
+      this._generatePath('pathBackground', 100, false, this._colors[0], this._maxValClass);
+      this._generatePath('pathForegroundOuter', 20, true, this._colors[0], this._valClass);
+      this._generatePath('pathForegroundInner', 1, true, this._colors[1], this._valClass);
       
-      this._movingPath = this._svg.getElementsByTagName('path')[1];
+      this._movingPath = this._svg.getElementsByTagName('path')[2];
+      this._movingPathShd = this._svg.getElementsByTagName('path')[1];
 
       var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
       text.setAttribute('text-anchor', 'middle');
       this._svg.appendChild(text);
 
-      this._generatePercentageText(text, "1", '98%');
-      this._generatePercentageText(text, "1", '104%');
+      this._generatePercentageText(text, '#pathForegroundInner',  1);
+      this._generatePercentageText(text, '#pathForegroundOuter',  1);
 
       this._percentageTextInner = this._svg.getElementsByTagName('textPath')[0];
-      this._percentageTextOutter = this._svg.getElementsByTagName('textPath')[1];
+      this._percentageTextOuter = this._svg.getElementsByTagName('textPath')[1];
 
       return this;
     },
 
-    _generatePercentageText: function(parentDOM, percentage, startOffset){
+    _generatePercentageText: function(parentDOM, id, percentage){
 
       var textPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
-      textPath.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', '#pathForeground');
-      textPath.setAttribute('startOffset', startOffset);
+      textPath.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href', id);
+      textPath.setAttribute('startOffset', '98%');
       textPath.setAttribute('text-anchor', 'end');
       textPath.setAttribute('class', 'percentage');
       textPath.setAttribute('fill', '#ffffff');
@@ -225,9 +232,7 @@
 
     },
 
-    _generatePath: function(percentage, open, color, pathClass) {
-
-      var id = (!open) ? 'pathBackground' : 'pathForeground';
+    _generatePath: function(id, percentage, open, color, pathClass) {
 
       var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('fill', 'transparent');
@@ -265,7 +270,7 @@
         1, // clockwise
         this._radius + this._radiusAdjusted * Math.cos(endAdjusted),
         this._radius + this._radiusAdjusted * Math.sin(endAdjusted),
-        open ? '' : 'Z' // close
+        '' // close // could be Z
       ].join(' ');
     },
 

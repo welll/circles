@@ -104,9 +104,9 @@
   var circle;
   
   displayTime();
-  var i = 65;
+  var i = 0;
   function displayTime() {
-      //i++;
+      i++;
       var time = moment().format('HH:mm:ss');
 
       if(circle){
@@ -118,9 +118,8 @@
         circle.update(i)
       }
 
-      setTimeout(displayTime, 100000);
+      setTimeout(displayTime, 1000);
    }
-
      
 		var colors =  [ '#dfdedb', '#fd9314'];
     
