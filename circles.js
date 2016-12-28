@@ -130,7 +130,6 @@
 
       this._movingPath.setAttribute('d', this._calculatePath(percentage, true));
       this._movingPathShd.setAttribute('d', this._calculatePath(percentage+10, true));
-        debugger;
       this._percentageTextInner.innerHTML = percentage + "%";
       this._percentageTextOuter.innerHTML = (100 -percentage) + "%";
 
